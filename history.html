@@ -1,34 +1,35 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>History - Password Manager Pro</title>
 <link rel="stylesheet" href="style.css">
-
 </head>
-
 <body>
-
-<h2>Global History</h2>
-
+<header class="topbar">
+<h1>Overall History</h1>
+<div class="top-actions"><a href="index.html">Home</a><a href="settings.html">Settings</a></div>
+</header>
+<main>
 <div id="history"></div>
-
+</main>
+<div id="toast"></div>
 <script src="storage.js"></script>
-
+<script src="toast.js"></script>
+<script src="theme.js"></script>
+<script src="ui.js"></script>
 <script>
+const historyEl = document.getElementById('history');
+const history = PMStorage.loadGlobalHistory();
 
-let h=document.getElementById("history");
-
-historyLog.forEach(i=>{
-
-let d=new Date(i.date);
-
-h.innerHTML+=`<p>${i.site} - ${i.action} - ${d}</p>`;
-
-});
-
+if (!history.length) {
+  historyEl.innerHTML = '<p class="empty">No global history yet.</p>';
+} else {
+  historyEl.innerHTML = history
+    .map((item) => `<article class="siteCard"><h3>${item.siteName}</h3><p><strong>Action:</strong> ${item.action}</p><p><strong>Details:</strong> ${item.details || '-'}</p><p><strong>When:</strong> ${fmtDate(item.at)}</p></article>`)
+    .join('');
+}
 </script>
-
 </body>
-
 </html>

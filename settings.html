@@ -1,38 +1,55 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Settings - Password Manager Pro</title>
 <link rel="stylesheet" href="style.css">
-
 </head>
-
 <body>
-
-<h2>Settings</h2>
-
+<header class="topbar">
+<h1>Settings</h1>
+<div class="top-actions"><a href="index.html">Home</a><a href="history.html">History</a></div>
+</header>
+<main>
+<section class="siteCard">
+<h3>Theme</h3>
+<p>Switch between light and dark mode.</p>
 <button onclick="toggleTheme()">Toggle Theme</button>
-
-<button onclick="clearAll()">Clear All Data</button>
-
+</section>
+<section class="siteCard">
+<h3>Auto Backup</h3>
+<p>Create automatic local snapshot after each change.</p>
+<label class="favCheck"><input type="checkbox" id="autoBackupToggle"> Enable Auto Backup</label>
+</section>
+<section class="siteCard">
+<h3>Danger Zone</h3>
+<p>Clear all local data including passwords and history.</p>
+<button class="danger" onclick="clearAll()">Clear All Data</button>
+</section>
+</main>
+<div id="toast"></div>
 <script src="storage.js"></script>
-
+<script src="toast.js"></script>
+<script src="theme.js"></script>
 <script>
+const toggle = document.getElementById('autoBackupToggle');
+const settings = PMStorage.loadSettings();
+toggle.checked = !!settings.autoBackup;
 
-function clearAll(){
+toggle.addEventListener('change', () => {
+  PMStorage.saveSettings({ ...PMStorage.loadSettings(), autoBackup: toggle.checked });
+  showToast(`Auto backup ${toggle.checked ? 'enabled' : 'disabled'}`, 'success');
+});
 
-if(confirm("Delete all data?")){
-
-localStorage.clear();
-
-location.reload();
-
+function clearAll() {
+  if (!confirm('Delete all data?')) return;
+  localStorage.removeItem('pm_sites_v2');
+  localStorage.removeItem('pm_global_history_v2');
+  localStorage.removeItem('pm_auto_backup_v2');
+  showToast('All data cleared', 'error');
+  setTimeout(() => { window.location.href = 'index.html'; }, 500);
 }
-
-}
-
 </script>
-
 </body>
-
 </html>
