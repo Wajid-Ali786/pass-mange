@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<h2>Settings</h2>
+
+<button onclick="toggleTheme()">Toggle Theme</button>
+
+<button onclick="clearAll()">Clear All Data</button>
+
+<script src="storage.js"></script>
+
+<script>
+
+function clearAll(){
+
+if(confirm("Delete all data?")){
+
+localStorage.clear();
+
+location.reload();
+
+}
+
+}
+
+</script>
+
+</body>
+
+</html>

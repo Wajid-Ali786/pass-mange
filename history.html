@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+<h2>Global History</h2>
+
+<div id="history"></div>
+
+<script src="storage.js"></script>
+
+<script>
+
+let h=document.getElementById("history");
+
+historyLog.forEach(i=>{
+
+let d=new Date(i.date);
+
+h.innerHTML+=`<p>${i.site} - ${i.action} - ${d}</p>`;
+
+});
+
+</script>
+
+</body>
+
+</html>
