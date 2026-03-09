@@ -1,51 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Password Manager Pro</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Password Manager Pro</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-<header class="topbar">
-<h1>Password Manager Pro</h1>
-<div class="top-actions">
-<input id="searchInput" placeholder="Search name, url, user, password, date...">
-<button onclick="openAddForm()">Add</button>
-<button onclick="exportBackup()">Export</button>
-<label class="importBtn">Import
-<input type="file" id="importFile" accept="application/json">
-</label>
-<a href="history.html">History</a>
-<a href="settings.html">Settings</a>
-</div>
-</header>
-<main>
-<div id="sitesContainer"></div>
-</main>
-<div id="siteModal" class="modal">
-<div class="modal-box">
-<h2 id="modalTitle">Add Password</h2>
-<input id="siteName" placeholder="Site Name">
-<input id="siteURL" placeholder="Site URL">
-<input id="siteUser" placeholder="Username / Email">
-<input id="sitePass" placeholder="Password">
-<label>Password Updated Date & Time</label>
-<input type="datetime-local" id="passDate">
-<label class="favCheck"><input type="checkbox" id="favoriteCheck"> Favorite</label>
-<div class="modal-actions">
-<button onclick="saveSite()">Save</button>
-<button onclick="closeModal()">Cancel</button>
-</div>
-</div>
-</div>
-<div id="toast"></div>
-<script src="storage.js"></script>
-<script src="toast.js"></script>
-<script src="search.js"></script>
-<script src="backup.js"></script>
-<script src="theme.js"></script>
-<script src="ui.js"></script>
-<script src="app.js"></script>
+    <header class="topbar">
+        <h1>Password Manager Pro</h1>
+        <div class="top-actions">
+            <input id="searchInput" placeholder="Search name, url, user, password, date...">
+            <button onclick="openAddForm()">Add</button>
+            <button onclick="exportBackup()">Export</button>
+            <label class="importBtn">Import
+                <input type="file" id="importFile" accept="application/json">
+            </label>
+            <a href="history.html">History</a>
+            <a href="settings.html">Settings</a>
+        </div>
+    </header>
+    <main>
+        <div id="sitesContainer"></div>
+    </main>
+    <div id="siteModal" class="modal">
+        <div class="modal-box">
+            <h2 id="modalTitle">Add Password</h2>
+            <input id="siteName" placeholder="Site Name">
+            <input id="siteURL" placeholder="Site URL">
+            <input id="siteUser" placeholder="Username / Email">
+            <input id="sitePass" placeholder="Password">
+            <label>Password Updated Date & Time</label>
+            <input type="datetime-local" id="passDate">
+            <label class="favCheck"><input type="checkbox" id="favoriteCheck"> Favorite</label>
+            <div class="modal-actions">
+                <button onclick="saveSite()">Save</button>
+                <button onclick="closeModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- deleteModal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <p id="modalText"></p>
+            <button id="confirmBtn">Yes, delete</button>
+            <button id="cancelBtn">Cancel</button>
+        </div>
+    </div>
+    <div id="toast"></div>
+    <script src="storage.js"></script>
+    <script src="toast.js"></script>
+    <script src="search.js"></script>
+    <script src="backup.js"></script>
+    <script src="theme.js"></script>
+    <script src="ui.js"></script>
+    <script src="app.js"></script>
 </body>
+
 </html>

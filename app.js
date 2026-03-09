@@ -114,6 +114,8 @@ function saveSite() {
   closeModal();
 }
 
+
+
 function deleteSiteById(id) {
   const site = pmSites.find((s) => s.id === id);
   if (!site) return;
@@ -123,6 +125,22 @@ function deleteSiteById(id) {
   persistData();
   renderSites();
   showToast('Entry deleted', 'error');
+}
+
+function showDeleteModal(siteId, siteName) {
+  const modal = document.getElementById('deleteModal');
+  const text = document.getElementById('modalText');
+  text.textContent = `Are you sure you want to delete "${siteName}"?`;
+
+  modal.style.display = 'block';
+
+  document.getElementById('confirmBtn').onclick = () => {
+    deleteSiteById(siteId);
+    modal.style.display = 'none';
+  };
+  document.getElementById('cancelBtn').onclick = () => {
+    modal.style.display = 'none';
+  };
 }
 
 function toggleFavoriteSite(id) {
@@ -186,7 +204,7 @@ function renderSites() {
       <div class="row">
         <button onclick="copyPassword('${site.id}')">Copy</button>
         <button onclick="openEditForm('${site.id}')">Edit</button>
-        <button class="danger" onclick="deleteSiteById('${site.id}')">Delete</button>
+        <button class="danger" onclick="showDeleteModal('${site.id}', '${site.name}')">Delete</button>
       </div>
       <details>
         <summary>Site History</summary>
