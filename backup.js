@@ -1,44 +1,57 @@
-function exportBackup(){
-
-let data={
-sites,
-historyLog
-};
-
-let blob=new Blob([JSON.stringify(data)]);
-
-let a=document.createElement("a");
-
-a.href=URL.createObjectURL(blob);
-
-a.download="password-backup.json";
-
-a.click();
-
-toast("Backup exported");
-
+function createBackupPayload() {
+  return {
+    sites: window.pmSites || [],
+    globalHistory: window.pmGlobalHistory || [],
+    settings: PMStorage.loadSettings(),
+    meta: {
+      exportedAt: PMStorage.nowISO(),
+      version: 2
+    }
+  };
 }
 
-document.getElementById("importFile").addEventListener("change",e=>{
+function exportBackup() {
+  const payload = createBackupPayload();
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `password-manager-backup-${Date.now()}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('Backup exported', 'success');
+}
 
-let file=e.target.files[0];
+function importBackupFromFile(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      if (!Array.isArray(data.sites) || !Array.isArray(data.globalHistory)) {
+        throw new Error('Invalid backup format');
+      }
+      PMStorage.saveSites(data.sites);
+      PMStorage.saveGlobalHistory(data.globalHistory);
+      if (data.settings && typeof data.settings === 'object') {
+        PMStorage.saveSettings({ ...PMStorage.loadSettings(), ...data.settings });
+      }
+      PMStorage.saveAutoBackupSnapshot(data);
+      showToast('Backup imported', 'success');
+      setTimeout(() => window.location.reload(), 500);
+    } catch (_) {
+      showToast('Import failed. Invalid JSON backup.', 'error');
+    }
+  };
+  reader.readAsText(file);
+}
 
-let reader=new FileReader();
+function runAutoBackup() {
+  const settings = PMStorage.loadSettings();
+  if (!settings.autoBackup) return;
+  PMStorage.saveAutoBackupSnapshot(createBackupPayload());
+}
 
-reader.onload=function(){
-
-let data=JSON.parse(reader.result);
-
-sites=data.sites||[];
-
-historyLog=data.historyLog||[];
-
-saveData();
-
-location.reload();
-
-};
-
-reader.readAsText(file);
-
-});
+const importFileInput = document.getElementById('importFile');
+if (importFileInput) {
+  importFileInput.addEventListener('change', (e) => importBackupFromFile(e.target.files[0]));
+}

@@ -1,220 +1,109 @@
-// STORAGE SYSTEM
+const PM_STORAGE_KEY = 'pm_sites_v2';
+const PM_HISTORY_KEY = 'pm_global_history_v2';
+const PM_SETTINGS_KEY = 'pm_settings_v2';
+const PM_BACKUP_KEY = 'pm_auto_backup_v2';
 
-const STORAGE_KEY = "pm_sites";
-const HISTORY_KEY = "pm_history";
-
-let sites = [];
-let globalHistory = [];
-
-
-// Load data from localStorage
-function loadStorage(){
-
-try{
-
-sites = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-globalHistory = JSON.parse(localStorage.getItem(HISTORY_KEY)) || [];
-
-}catch(e){
-
-sites = [];
-globalHistory = [];
-
+function uid() {
+  return `${Date.now()}_${Math.random().toString(16).slice(2, 10)}`;
 }
 
+function nowISO() {
+  return new Date().toISOString();
 }
 
-
-// Save data to localStorage
-function saveStorage(){
-
-localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
-localStorage.setItem(HISTORY_KEY, JSON.stringify(globalHistory));
-
+function safeParse(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch (_) {
+    return fallback;
+  }
 }
 
+function loadSites() {
+  return safeParse(PM_STORAGE_KEY, []);
+}
 
-// Create new site object
-function createSite(data){
+function saveSites(sites) {
+  localStorage.setItem(PM_STORAGE_KEY, JSON.stringify(sites));
+}
 
-return {
+function loadGlobalHistory() {
+  return safeParse(PM_HISTORY_KEY, []);
+}
 
-id: Date.now().toString(),
+function saveGlobalHistory(history) {
+  localStorage.setItem(PM_HISTORY_KEY, JSON.stringify(history));
+}
 
-name: data.name || "",
-url: data.url || "",
-username: data.username || "",
-password: data.password || "",
+function loadSettings() {
+  return {
+    theme: 'light',
+    autoBackup: true,
+    ...safeParse(PM_SETTINGS_KEY, {})
+  };
+}
 
-passDate: data.passDate || "",
+function saveSettings(settings) {
+  localStorage.setItem(PM_SETTINGS_KEY, JSON.stringify(settings));
+}
 
-favorite: data.favorite || false,
+function saveAutoBackupSnapshot(payload) {
+  localStorage.setItem(PM_BACKUP_KEY, JSON.stringify({
+    backupAt: nowISO(),
+    ...payload
+  }));
+}
 
-createdAt: Date.now(),
-updatedAt: Date.now(),
+function loadAutoBackupSnapshot() {
+  return safeParse(PM_BACKUP_KEY, null);
+}
 
-history: []
+function createSite(data) {
+  const updatedAt = data.customPassDate || nowISO();
+  return {
+    id: uid(),
+    name: (data.name || '').trim(),
+    url: (data.url || '').trim(),
+    username: (data.username || '').trim(),
+    password: data.password || '',
+    favorite: !!data.favorite,
+    createdAt: nowISO(),
+    updatedAt,
+    passwordUpdatedAt: updatedAt,
+    history: [
+      {
+        id: uid(),
+        action: 'created',
+        at: nowISO(),
+        details: 'Entry created'
+      }
+    ]
+  };
+}
 
+function addGlobalHistory(history, site, action, details) {
+  history.unshift({
+    id: uid(),
+    siteId: site.id,
+    siteName: site.name,
+    action,
+    details,
+    at: nowISO()
+  });
+}
+
+window.PMStorage = {
+  uid,
+  nowISO,
+  loadSites,
+  saveSites,
+  loadGlobalHistory,
+  saveGlobalHistory,
+  loadSettings,
+  saveSettings,
+  saveAutoBackupSnapshot,
+  loadAutoBackupSnapshot,
+  createSite,
+  addGlobalHistory
 };
-
-}
-
-
-// Add new site
-function addSite(site){
-
-sites.push(site);
-
-globalHistory.push({
-
-siteId: site.id,
-siteName: site.name,
-
-action: "created",
-
-time: Date.now()
-
-});
-
-saveStorage();
-
-}
-
-
-// Update existing site
-function updateSite(id, newData){
-
-let site = sites.find(s => s.id === id);
-
-if(!site) return;
-
-
-// Save old password in site history
-if(site.password !== newData.password){
-
-site.history.push({
-
-password: site.password,
-changedAt: Date.now()
-
-});
-
-}
-
-
-site.name = newData.name;
-site.url = newData.url;
-site.username = newData.username;
-site.password = newData.password;
-site.passDate = newData.passDate;
-site.favorite = newData.favorite;
-
-site.updatedAt = Date.now();
-
-
-globalHistory.push({
-
-siteId: site.id,
-siteName: site.name,
-
-action: "updated",
-
-time: Date.now()
-
-});
-
-
-saveStorage();
-
-}
-
-
-// Delete site
-function deleteSite(id){
-
-let site = sites.find(s => s.id === id);
-
-sites = sites.filter(s => s.id !== id);
-
-globalHistory.push({
-
-siteId: id,
-siteName: site ? site.name : "",
-
-action: "deleted",
-
-time: Date.now()
-
-});
-
-saveStorage();
-
-}
-
-
-// Get site by id
-function getSite(id){
-
-return sites.find(s => s.id === id);
-
-}
-
-
-// Toggle favorite
-function toggleFavorite(id){
-
-let site = getSite(id);
-
-if(!site) return;
-
-site.favorite = !site.favorite;
-
-saveStorage();
-
-}
-
-
-// Search system
-function searchSites(keyword){
-
-if(!keyword) return sites;
-
-keyword = keyword.toLowerCase();
-
-return sites.filter(site => {
-
-let text = (
-site.name +
-site.url +
-site.username +
-site.password +
-site.passDate
-).toLowerCase();
-
-return text.includes(keyword);
-
-});
-
-}
-
-
-// Auto backup every 5 minutes
-setInterval(()=>{
-
-localStorage.setItem(
-"pm_auto_backup",
-JSON.stringify({
-
-time: Date.now(),
-sites,
-globalHistory
-
-})
-
-);
-
-}, 300000);
-
-
-// Initialize
-loadStorage();
