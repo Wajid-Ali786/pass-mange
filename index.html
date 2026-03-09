@@ -1,89 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Password Manager Pro</title>
-  <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Password Manager Pro</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="topbar">
-    <h1>Password Manager Pro</h1>
-    <nav class="top-actions" id="navLinks">
-      <a href="#home" data-route="home">Home</a>
-      <a href="#history" data-route="history">Password History</a>
-      <a href="#settings" data-route="settings">Settings</a>
-      <button onclick="openAddForm()">Add</button>
-      <button onclick="exportBackup()">Export</button>
-      <label class="importBtn">Import
-        <input type="file" id="importFile" accept="application/json">
-      </label>
-    </nav>
-  </header>
-
-  <div id="pageLoader" class="page-loader hidden">Loading...</div>
-
-  <main>
-    <section id="view-home" class="view active">
-      <div class="toolbar">
-        <input id="searchInput" placeholder="Search name, url, user, password, date...">
-      </div>
-      <div id="sitesContainer"></div>
-    </section>
-
-    <section id="view-history" class="view">
-      <h2>Password / Site History</h2>
-      <div id="history"></div>
-    </section>
-
-    <section id="view-settings" class="view">
-      <div class="settings-grid">
-        <article class="siteCard">
-          <h3>Theme</h3>
-          <p>Switch between light and dark mode.</p>
-          <button onclick="toggleTheme()">Toggle Theme</button>
-        </article>
-
-        <article class="siteCard">
-          <h3>Auto Backup</h3>
-          <p>Create automatic local snapshot after each change.</p>
-          <label class="favCheck"><input type="checkbox" id="autoBackupToggle"> Enable Auto Backup</label>
-        </article>
-
-        <article class="siteCard">
-          <h3>Danger Zone</h3>
-          <p>Clear all local data including passwords and history.</p>
-          <button class="danger" onclick="clearAll()">Clear All Data</button>
-        </article>
-      </div>
-    </section>
-  </main>
-
-  <div id="siteModal" class="modal">
-    <div class="modal-box">
-      <h2 id="modalTitle">Add Password</h2>
-      <input id="siteName" placeholder="Site Name">
-      <input id="siteURL" placeholder="Site URL">
-      <input id="siteUser" placeholder="Username / Email">
-      <input id="sitePass" placeholder="Password">
-      <label>Password Updated Date & Time</label>
-      <input type="datetime-local" id="passDate">
-      <label class="favCheck"><input type="checkbox" id="favoriteCheck"> Favorite</label>
-      <div class="modal-actions">
-        <button onclick="saveSite()">Save</button>
-        <button onclick="closeModal()">Cancel</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="toast"></div>
-
-  <script src="storage.js"></script>
-  <script src="toast.js"></script>
-  <script src="search.js"></script>
-  <script src="backup.js"></script>
-  <script src="theme.js"></script>
-  <script src="ui.js"></script>
-  <script src="app.js"></script>
+<header class="topbar">
+<h1>Password Manager Pro</h1>
+<div class="top-actions">
+<input id="searchInput" placeholder="Search name, url, user, password, date...">
+<button onclick="openAddForm()">Add</button>
+<button onclick="exportBackup()">Export</button>
+<label class="importBtn">Import
+<input type="file" id="importFile" accept="application/json">
+</label>
+<a href="history.html">History</a>
+<a href="settings.html">Settings</a>
+</div>
+</header>
+<main>
+<div id="sitesContainer"></div>
+</main>
+<div id="siteModal" class="modal">
+<div class="modal-box">
+<h2 id="modalTitle">Add Password</h2>
+<input id="siteName" placeholder="Site Name">
+<input id="siteURL" placeholder="Site URL">
+<input id="siteUser" placeholder="Username / Email">
+<input id="sitePass" placeholder="Password">
+<label>Password Updated Date & Time</label>
+<input type="datetime-local" id="passDate">
+<label class="favCheck"><input type="checkbox" id="favoriteCheck"> Favorite</label>
+<div class="modal-actions">
+<button onclick="saveSite()">Save</button>
+<button onclick="closeModal()">Cancel</button>
+</div>
+</div>
+</div>
+<div id="toast"></div>
+<script src="storage.js"></script>
+<script src="toast.js"></script>
+<script src="search.js"></script>
+<script src="backup.js"></script>
+<script src="theme.js"></script>
+<script src="ui.js"></script>
+<script src="app.js"></script>
 </body>
 </html>

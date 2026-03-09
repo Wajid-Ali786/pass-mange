@@ -1,10 +1,11 @@
 function createBackupPayload() {
   return {
     sites: window.pmSites || [],
+    globalHistory: window.pmGlobalHistory || [],
     settings: PMStorage.loadSettings(),
     meta: {
       exportedAt: PMStorage.nowISO(),
-      version: 3
+      version: 2
     }
   };
 }
@@ -26,8 +27,11 @@ function importBackupFromFile(file) {
   reader.onload = () => {
     try {
       const data = JSON.parse(reader.result);
-      if (!Array.isArray(data.sites)) throw new Error('Invalid backup format');
+      if (!Array.isArray(data.sites) || !Array.isArray(data.globalHistory)) {
+        throw new Error('Invalid backup format');
+      }
       PMStorage.saveSites(data.sites);
+      PMStorage.saveGlobalHistory(data.globalHistory);
       if (data.settings && typeof data.settings === 'object') {
         PMStorage.saveSettings({ ...PMStorage.loadSettings(), ...data.settings });
       }
