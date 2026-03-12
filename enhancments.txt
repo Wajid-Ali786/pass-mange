@@ -1,0 +1,34 @@
+History Popups: Allow reverting to a previous password directly from the history
+Favorites: Toggle to show only starred/favorite passwords.
+
+Security Features:
+Encryption: Make sure passwords are not stored in plain text in local storage.
+
+Sorting: Allow sorting by name, date updated, or most recently used.
+Dark Mode: Many users prefer dark mode for password managers.
+
+Categories / Tags:
+Allow users to assign categories to each entry (e.g., Work, Social, Banking, Shopping).
+
+Cards could display a small tag badge.
+Users can filter by category.
+Cards Count:
+Show the number of passwords in each category (e.g., Banking: 4, Social: 10).
+
+Custom Card Colors:
+Let users choose a color or theme for each category.
+
+Card Collapse / Expand:
+Collapse cards to show only the name and URL for easier scanning.
+
+Pin Important Cards:
+Similar to favorites but pins them at the top.
+
+Multiple History States:
+Allow reverting to any previous password, not just the creation.
+
+Drag & Drop Cards:
+Users can reorder cards manually within a category.
+
+Pagination / Infinite Scroll:
+If there are many cards, avoid long scrolling. also with a control that how much cards user want to see.

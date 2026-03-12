@@ -276,7 +276,7 @@ function renderSites() {
       <p><strong>Password Updated:</strong> ${fmtDate(site.passwordUpdatedAt)}</p>
       <p><strong>Updated:</strong> ${fmtDate(site.updatedAt)}</p>
       <div class="row">
-        <button onclick="openEditForm('${site.id}')"><i class="fa-solid fa-pen"></i></button>
+        <button onclick="openEditForm('${site.id}')"><i class="fa-solid fa-edit"></i></button>
         <button class="danger" onclick="showDeleteModal('${site.id}', '${site.name}')"><i class="fa-solid fa-trash"></i></button>
         <button class="history-open-btn" onclick="openHistory('${site.id}')">
           <i class="fa-solid fa-clock-rotate-left"></i> History
