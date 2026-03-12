@@ -5,7 +5,7 @@ function showToast(message, type = "info") {
 
   if (!toast) return;
 
-  toast.innerText = message;
+  toast.innerHTML = message;
 
   toast.classList.remove("show");
 

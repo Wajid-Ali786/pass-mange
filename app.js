@@ -3,16 +3,16 @@ let pmGlobalHistory = PMStorage.loadGlobalHistory();
 window.pmSites = pmSites;
 window.pmGlobalHistory = pmGlobalHistory;
 
-const modal = document.getElementById('siteModal');
-const modalTitle = document.getElementById('modalTitle');
-const siteNameInput = document.getElementById('siteName');
-const siteURLInput = document.getElementById('siteURL');
-const siteUserInput = document.getElementById('siteUser');
-const sitePassInput = document.getElementById('sitePass');
-const passDateInput = document.getElementById('passDate');
-const favoriteInput = document.getElementById('favoriteCheck');
-const searchInput = document.getElementById('searchInput');
-const siteContainer = document.getElementById('sitesContainer');
+const modal = document.getElementById("siteModal");
+const modalTitle = document.getElementById("modalTitle");
+const siteNameInput = document.getElementById("siteName");
+const siteURLInput = document.getElementById("siteURL");
+const siteUserInput = document.getElementById("siteUser");
+const sitePassInput = document.getElementById("sitePass");
+const passDateInput = document.getElementById("passDate");
+const favoriteInput = document.getElementById("favoriteCheck");
+const searchInput = document.getElementById("searchInput");
+const siteContainer = document.getElementById("sitesContainer");
 
 let editingSiteId = null;
 
@@ -24,32 +24,32 @@ function persistData() {
 
 function openAddForm() {
   editingSiteId = null;
-  modalTitle.textContent = 'Add Password';
-  siteNameInput.value = '';
-  siteURLInput.value = '';
-  siteUserInput.value = '';
-  sitePassInput.value = '';
+  modalTitle.textContent = "Add Password";
+  siteNameInput.value = "";
+  siteURLInput.value = "";
+  siteUserInput.value = "";
+  sitePassInput.value = "";
   passDateInput.value = new Date().toISOString().slice(0, 16);
   favoriteInput.checked = false;
-  modal.style.display = 'flex';
+  modal.style.display = "flex";
 }
 
 function openEditForm(id) {
   const site = pmSites.find((s) => s.id === id);
   if (!site) return;
   editingSiteId = id;
-  modalTitle.textContent = 'Edit Password';
+  modalTitle.textContent = "Edit Password";
   siteNameInput.value = site.name;
   siteURLInput.value = site.url;
   siteUserInput.value = site.username;
   sitePassInput.value = site.password;
-  passDateInput.value = (site.passwordUpdatedAt || '').slice(0, 16);
+  passDateInput.value = (site.passwordUpdatedAt || "").slice(0, 16);
   favoriteInput.checked = site.favorite;
-  modal.style.display = 'flex';
+  modal.style.display = "flex";
 }
 
 function closeModal() {
-  modal.style.display = 'none';
+  modal.style.display = "none";
 }
 
 function buildSiteHistoryEntry(site, action, details, at) {
@@ -57,7 +57,7 @@ function buildSiteHistoryEntry(site, action, details, at) {
     id: PMStorage.uid(),
     action,
     details,
-    at: at || PMStorage.nowISO()
+    at: at || PMStorage.nowISO(),
   });
 }
 
@@ -67,20 +67,27 @@ function saveSite() {
     url: siteURLInput.value,
     username: siteUserInput.value,
     password: sitePassInput.value,
-    customPassDate: passDateInput.value ? new Date(passDateInput.value).toISOString() : PMStorage.nowISO(),
-    favorite: favoriteInput.checked
+    customPassDate: passDateInput.value
+      ? new Date(passDateInput.value).toISOString()
+      : PMStorage.nowISO(),
+    favorite: favoriteInput.checked,
   };
 
   if (!data.name || !data.url || !data.username || !data.password) {
-    showToast('Please fill all fields', 'error');
+    showToast("Please fill all fields", "error");
     return;
   }
 
   if (!editingSiteId) {
     const site = PMStorage.createSite(data);
     pmSites.unshift(site);
-    PMStorage.addGlobalHistory(pmGlobalHistory, site, 'created', 'Created new entry');
-    showToast('Entry added', 'success');
+    PMStorage.addGlobalHistory(
+      pmGlobalHistory,
+      site,
+      "created",
+      "Created new entry",
+    );
+    showToast("Entry added", "success");
   } else {
     const site = pmSites.find((s) => s.id === editingSiteId);
     if (!site) return;
@@ -96,17 +103,37 @@ function saveSite() {
     site.updatedAt = PMStorage.nowISO();
 
     if (oldPassword !== data.password) {
-      buildSiteHistoryEntry(site, 'password_changed', 'Password updated', data.customPassDate);
-      PMStorage.addGlobalHistory(pmGlobalHistory, site, 'password_changed', 'Password updated');
+      buildSiteHistoryEntry(
+        site,
+        "password_changed",
+        "Password updated",
+        data.customPassDate,
+      );
+      PMStorage.addGlobalHistory(
+        pmGlobalHistory,
+        site,
+        "password_changed",
+        "Password updated",
+      );
     }
 
     if (oldFavorite !== data.favorite) {
-      PMStorage.addGlobalHistory(pmGlobalHistory, site, data.favorite ? 'favorited' : 'unfavorited', 'Favorite status changed');
+      PMStorage.addGlobalHistory(
+        pmGlobalHistory,
+        site,
+        data.favorite ? "favorited" : "unfavorited",
+        "Favorite status changed",
+      );
     }
 
-    buildSiteHistoryEntry(site, 'updated', 'Entry updated');
-    PMStorage.addGlobalHistory(pmGlobalHistory, site, 'updated', 'Entry updated');
-    showToast('Entry updated', 'success');
+    buildSiteHistoryEntry(site, "updated", "Entry updated");
+    PMStorage.addGlobalHistory(
+      pmGlobalHistory,
+      site,
+      "updated",
+      "Entry updated",
+    );
+    showToast("Entry updated", "success");
   }
 
   persistData();
@@ -114,32 +141,30 @@ function saveSite() {
   closeModal();
 }
 
-
-
 function deleteSiteById(id) {
   const site = pmSites.find((s) => s.id === id);
   if (!site) return;
   pmSites = pmSites.filter((s) => s.id !== id);
   window.pmSites = pmSites;
-  PMStorage.addGlobalHistory(pmGlobalHistory, site, 'deleted', 'Entry removed');
+  PMStorage.addGlobalHistory(pmGlobalHistory, site, "deleted", "Entry removed");
   persistData();
   renderSites();
-  showToast('Entry deleted', 'error');
+  showToast("Entry deleted", "error");
 }
 
 function showDeleteModal(siteId, siteName) {
-  const modal = document.getElementById('deleteModal');
-  const text = document.getElementById('modalText');
+  const modal = document.getElementById("deleteModal");
+  const text = document.getElementById("modalText");
   text.textContent = `Are you sure you want to delete "${siteName}"?`;
 
-  modal.style.display = 'block';
+  modal.style.display = "block";
 
-  document.getElementById('confirmBtn').onclick = () => {
+  document.getElementById("confirmBtn").onclick = () => {
     deleteSiteById(siteId);
-    modal.style.display = 'none';
+    modal.style.display = "none";
   };
-  document.getElementById('cancelBtn').onclick = () => {
-    modal.style.display = 'none';
+  document.getElementById("cancelBtn").onclick = () => {
+    modal.style.display = "none";
   };
 }
 
@@ -148,39 +173,78 @@ function toggleFavoriteSite(id) {
   if (!site) return;
   site.favorite = !site.favorite;
   site.updatedAt = PMStorage.nowISO();
-  buildSiteHistoryEntry(site, site.favorite ? 'favorited' : 'unfavorited', 'Favorite toggled');
-  PMStorage.addGlobalHistory(pmGlobalHistory, site, site.favorite ? 'favorited' : 'unfavorited', 'Favorite toggled');
+  buildSiteHistoryEntry(
+    site,
+    site.favorite ? "favorited" : "unfavorited",
+    "Favorite toggled",
+  );
+  PMStorage.addGlobalHistory(
+    pmGlobalHistory,
+    site,
+    site.favorite ? "favorited" : "unfavorited",
+    "Favorite toggled",
+  );
   persistData();
   renderSites();
-  showToast(site.favorite ? 'Added to favorites' : 'Removed from favorites');
+  if (site.favorite) {
+    showToast("Added to favorites", "success");
+  } else {
+    showToast("Removed from favorites", "error");
+  }
 }
 
 function togglePassword(btn, id) {
-  const text = document.getElementById(`pass_${id}`);
-  const masked = text.dataset.masked === 'true';
-  text.dataset.masked = masked ? 'false' : 'true';
-  text.textContent = masked ? text.dataset.password : '••••••••••••';
-  btn.textContent = masked ? 'Hide' : 'Show';
+  const input = document.getElementById(`pass_${id}`);
+  if (input.type === "password") {
+    input.type = "text";
+    btn.innerHTML = '<i class="fa-regular fa-eye-slash"></i>';
+  } else {
+    input.type = "password";
+    btn.innerHTML = '<i class="fa-regular fa-eye"></i>';
+  }
 }
 
 function copyPassword(id) {
-  const site = pmSites.find((s) => s.id === id);
-  if (!site) return;
-  navigator.clipboard.writeText(site.password);
-  showToast('Password copied', 'success');
+  const input = document.getElementById(`pass_${id}`);
+  navigator.clipboard.writeText(input.value);
+  showToast('<i class="fa-solid fa-copy"></i> Password copied', "success");
 }
 
 function renderSiteHistory(history) {
-  if (!history?.length) return '<p class="muted">No history yet</p>';
-  return `<ul class="history-list">${history
-    .slice(0, 5)
-    .map((item) => `<li><strong>${item.action}</strong> · ${fmtDate(item.at)}</li>`)
-    .join('')}</ul>`;
+
+  if (!history || history.length === 0) {
+    return `<div class="history-empty">No history yet</div>`;
+  }
+
+  return history.map(h => `
+    <div class="history-item">
+
+      <div class="history-icon">
+        <i class="fa-solid fa-clock"></i>
+      </div>
+
+      <div class="history-content">
+        <div class="history-action">${h.action}</div>
+        <div class="history-details">${h.details || ""}</div>
+        <div class="history-time">${new Date(h.at).toLocaleString()}</div>
+      </div>
+
+    </div>
+  `).join("");
+
+}
+
+function openHistory(id){
+  document.getElementById(`history_${id}`).classList.add("show");
+}
+
+function closeHistory(id){
+  document.getElementById(`history_${id}`).classList.remove("show");
 }
 
 function renderSites() {
-  const list = filterSitesByKeyword(pmSites, searchInput?.value || '');
-  siteContainer.innerHTML = '';
+  const list = filterSitesByKeyword(pmSites, searchInput?.value || "");
+  siteContainer.innerHTML = "";
 
   if (!list.length) {
     siteContainer.innerHTML = '<p class="empty">No matching results.</p>';
@@ -188,35 +252,56 @@ function renderSites() {
   }
 
   list.forEach((site) => {
-    const card = document.createElement('article');
-    card.className = 'siteCard';
+    const card = document.createElement("article");
+    card.className = "siteCard";
     card.innerHTML = `
       <h3>
-        <span>${site.favorite ? '⭐ ' : ''}${site.name}</span>
-        <button onclick="toggleFavoriteSite('${site.id}')">${site.favorite ? 'Unstar' : 'Star'}</button>
+        <span>${site.name}</span>
+        <button onclick="toggleFavoriteSite('${site.id}')" class="mark-star-unstar ${site.favorite ? "star" : "unstar"}">${site.favorite ? '<i class="fa-solid fa-star"></i>' : '<i class="fa-regular fa-star"></i>'}</button>
       </h3>
-      <p><strong>URL:</strong> ${site.url}</p>
+      <p class="url"><strong>URL:</strong><a href=" ${site.url}" target="_blank"> ${site.url}</a></p>
       <p><strong>User:</strong> ${site.username}</p>
-      <p><strong>Password:</strong> <span id="pass_${site.id}" data-password="${site.password.replace(/"/g, '&quot;')}" data-masked="true">••••••••••••</span>
-      <button onclick="togglePassword(this, '${site.id}')">Show</button></p>
+      <div class="pass-row">
+        <span class="pass-text">Password:</span>
+        <div class="password-box">
+          <button onclick="copyPassword('${site.id}')" class="copy-btn">
+            <i class="fa-solid fa-copy"></i>
+          </button>
+          <input type="password" id="pass_${site.id}" value="${site.password}" readonly>
+          <button onclick="togglePassword(this,'${site.id}')" class="toggle-btn">
+            <i class="fa-regular fa-eye"></i>
+          </button>
+        </div>
+      </div>
       <p><strong>Password Updated:</strong> ${fmtDate(site.passwordUpdatedAt)}</p>
       <p><strong>Updated:</strong> ${fmtDate(site.updatedAt)}</p>
       <div class="row">
-        <button onclick="copyPassword('${site.id}')">Copy</button>
         <button onclick="openEditForm('${site.id}')">Edit</button>
         <button class="danger" onclick="showDeleteModal('${site.id}', '${site.name}')">Delete</button>
       </div>
-      <details>
-        <summary>Site History</summary>
-        ${renderSiteHistory(site.history)}
-      </details>
+      <button class="history-open-btn" onclick="openHistory('${site.id}')">
+        <i class="fa-solid fa-clock-rotate-left"></i> Site History
+      </button>
+      <div class="history-modal" id="history_${site.id}">
+        <div class="history-modal-box">
+          <div class="history-modal-header">
+            <span>Site History</span>
+            <button onclick="closeHistory('${site.id}')" class="history-close">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+          <div class="history-modal-body">
+            ${renderSiteHistory(site.history)}
+          </div>
+        </div>
+      </div>
     `;
     siteContainer.appendChild(card);
   });
 }
 
 if (searchInput) {
-  searchInput.addEventListener('input', renderSites);
+  searchInput.addEventListener("input", renderSites);
 }
 
 window.onclick = (e) => {
