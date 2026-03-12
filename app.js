@@ -260,14 +260,14 @@ function renderSites() {
         <button onclick="toggleFavoriteSite('${site.id}')" class="mark-star-unstar ${site.favorite ? "star" : "unstar"}">${site.favorite ? '<i class="fa-solid fa-star"></i>' : '<i class="fa-regular fa-star"></i>'}</button>
       </h3>
       <p class="url"><strong>URL:</strong><a href=" ${site.url}" target="_blank"> ${site.url}</a></p>
-      <p><strong>User:</strong> ${site.username}</p>
+      <p class="user-name"><strong>User Name:</strong> <input type="text" value="${site.username}" readonly class="user-input"></p>
       <div class="pass-row">
         <span class="pass-text">Password:</span>
         <div class="password-box">
           <button onclick="copyPassword('${site.id}')" class="copy-btn">
             <i class="fa-solid fa-copy"></i>
           </button>
-          <input type="password" id="pass_${site.id}" value="${site.password}" readonly>
+          <input type="password" id="pass_${site.id}" value="${site.password}" readonly class="password-input">
           <button onclick="togglePassword(this,'${site.id}')" class="toggle-btn">
             <i class="fa-regular fa-eye"></i>
           </button>
@@ -276,12 +276,12 @@ function renderSites() {
       <p><strong>Password Updated:</strong> ${fmtDate(site.passwordUpdatedAt)}</p>
       <p><strong>Updated:</strong> ${fmtDate(site.updatedAt)}</p>
       <div class="row">
-        <button onclick="openEditForm('${site.id}')">Edit</button>
-        <button class="danger" onclick="showDeleteModal('${site.id}', '${site.name}')">Delete</button>
+        <button onclick="openEditForm('${site.id}')"><i class="fa-solid fa-pen"></i></button>
+        <button class="danger" onclick="showDeleteModal('${site.id}', '${site.name}')"><i class="fa-solid fa-trash"></i></button>
+        <button class="history-open-btn" onclick="openHistory('${site.id}')">
+          <i class="fa-solid fa-clock-rotate-left"></i> History
+        </button>
       </div>
-      <button class="history-open-btn" onclick="openHistory('${site.id}')">
-        <i class="fa-solid fa-clock-rotate-left"></i> Site History
-      </button>
       <div class="history-modal" id="history_${site.id}">
         <div class="history-modal-box">
           <div class="history-modal-header">

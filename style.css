@@ -164,7 +164,31 @@ main {
 .siteCard .url a:hover {
     text-decoration: underline;
 }
+.user-name {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.user-name strong {
+    font-weight: 700;
+    color: var(--text);
+}
+.user-input {
+    padding: 8px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    background: #f9f9f9;
+    outline: none;
+    width: 60%;
+}
 
+
+.user-input:focus {
+    border-color: var(--primary);
+    background: #fff;
+}
 .row {
     display: flex;
     gap: 8px;
@@ -189,7 +213,7 @@ main {
     width: 60%;
 }
 
-.password-box input {
+.password-input{
     width: 100%;
     padding: 8px 32px;
     border: 1px solid #ddd;
@@ -199,7 +223,7 @@ main {
     outline: none;
 }
 
-.password-box input:focus {
+.password-input:focus {
     border-color: var(--primary);
     background: #fff;
 }
