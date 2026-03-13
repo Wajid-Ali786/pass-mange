@@ -1,5 +1,7 @@
 function applyTheme(theme) {
   document.body.classList.toggle('dark', theme === 'dark');
+  const btn = document.getElementById('themeToggle');
+  if (btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
 }
 
 function loadTheme() {
@@ -12,7 +14,7 @@ function toggleTheme() {
   const next = settings.theme === 'dark' ? 'light' : 'dark';
   PMStorage.saveSettings({ ...settings, theme: next });
   applyTheme(next);
-  showToast(`Theme changed to ${next}`, 'success');
+  if (window.showToast) showToast(`Theme changed to ${next}`, 'success');
 }
 
 loadTheme();

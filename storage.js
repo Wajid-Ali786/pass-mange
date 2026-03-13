@@ -20,8 +20,49 @@ function safeParse(key, fallback) {
   }
 }
 
-function loadSites() {
-  return safeParse(PM_STORAGE_KEY, []);
+async function normalizeLoadedSites(sites) {
+  const normalized = [];
+  for (const site of sites || []) {
+    const next = { ...site };
+
+    if (!next.passwordEnc && typeof next.password === 'string') {
+      next.passwordEnc = await PMEncryption.encryptText(next.password);
+      delete next.password;
+    }
+
+    const history = Array.isArray(next.passwordHistory) ? next.passwordHistory : [];
+    next.passwordHistory = [];
+
+    for (const entry of history) {
+      if (entry.passwordEnc) {
+        next.passwordHistory.push(entry);
+      } else if (entry.password) {
+        next.passwordHistory.push({
+          id: entry.id || uid(),
+          changedAt: entry.changedAt || entry.at || nowISO(),
+          passwordEnc: await PMEncryption.encryptText(entry.password),
+        });
+      }
+    }
+
+    if (!next.passwordHistory.length && next.passwordEnc) {
+      next.passwordHistory.push({ id: uid(), changedAt: next.passwordUpdatedAt || nowISO(), passwordEnc: next.passwordEnc });
+    }
+
+    next.favorite = !!next.favorite;
+    next.pinned = !!next.pinned;
+    next.collapsed = !!next.collapsed;
+    next.category = next.category || 'General';
+    next.categoryColor = next.categoryColor || '#3964ff';
+    next.manualOrder = typeof next.manualOrder === 'number' ? next.manualOrder : Date.now();
+    normalized.push(next);
+  }
+  return normalized;
+}
+
+async function loadSites() {
+  const raw = safeParse(PM_STORAGE_KEY, []);
+  return normalizeLoadedSites(raw);
 }
 
 function saveSites(sites) {
@@ -40,7 +81,11 @@ function loadSettings() {
   return {
     theme: 'light',
     autoBackup: true,
-    ...safeParse(PM_SETTINGS_KEY, {})
+    pageSize: 10,
+    sortBy: 'manual',
+    favoritesOnly: false,
+    categoryFilter: 'all',
+    ...safeParse(PM_SETTINGS_KEY, {}),
   };
 }
 
@@ -49,36 +94,34 @@ function saveSettings(settings) {
 }
 
 function saveAutoBackupSnapshot(payload) {
-  localStorage.setItem(PM_BACKUP_KEY, JSON.stringify({
-    backupAt: nowISO(),
-    ...payload
-  }));
+  localStorage.setItem(PM_BACKUP_KEY, JSON.stringify({ backupAt: nowISO(), ...payload }));
 }
 
 function loadAutoBackupSnapshot() {
   return safeParse(PM_BACKUP_KEY, null);
 }
 
-function createSite(data) {
+async function createSite(data) {
   const updatedAt = data.customPassDate || nowISO();
+  const passwordEnc = await PMEncryption.encryptText(data.password || '');
   return {
     id: uid(),
     name: (data.name || '').trim(),
     url: (data.url || '').trim(),
     username: (data.username || '').trim(),
-    password: data.password || '',
+    passwordEnc,
     favorite: !!data.favorite,
+    pinned: !!data.pinned,
+    collapsed: false,
+    category: data.category || 'General',
+    categoryColor: data.categoryColor || '#3964ff',
+    lastUsedAt: updatedAt,
+    manualOrder: Date.now(),
     createdAt: nowISO(),
     updatedAt,
     passwordUpdatedAt: updatedAt,
-    history: [
-      {
-        id: uid(),
-        action: 'created',
-        at: nowISO(),
-        details: 'Entry created'
-      }
-    ]
+    history: [{ id: uid(), action: 'created', at: nowISO(), details: 'Entry created' }],
+    passwordHistory: [{ id: uid(), changedAt: updatedAt, passwordEnc }],
   };
 }
 
@@ -89,7 +132,7 @@ function addGlobalHistory(history, site, action, details) {
     siteName: site.name,
     action,
     details,
-    at: nowISO()
+    at: nowISO(),
   });
 }
 
@@ -105,5 +148,5 @@ window.PMStorage = {
   saveAutoBackupSnapshot,
   loadAutoBackupSnapshot,
   createSite,
-  addGlobalHistory
+  addGlobalHistory,
 };

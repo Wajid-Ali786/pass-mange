@@ -5,4 +5,17 @@ function fmtDate(value) {
   return d.toLocaleString();
 }
 
+function esc(text) {
+  return String(text || '')
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;');
+}
+
+window.PMUI = {
+  fmtDate,
+  esc,
+};
 window.fmtDate = fmtDate;
