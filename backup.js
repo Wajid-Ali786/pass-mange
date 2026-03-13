@@ -3,10 +3,11 @@ function createBackupPayload() {
     sites: window.pmSites || [],
     globalHistory: window.pmGlobalHistory || [],
     settings: PMStorage.loadSettings(),
+    cryptoKey: localStorage.getItem('pm_crypto_key_v1'),
     meta: {
       exportedAt: PMStorage.nowISO(),
-      version: 2
-    }
+      version: 3,
+    },
   };
 }
 
@@ -34,6 +35,9 @@ function importBackupFromFile(file) {
       PMStorage.saveGlobalHistory(data.globalHistory);
       if (data.settings && typeof data.settings === 'object') {
         PMStorage.saveSettings({ ...PMStorage.loadSettings(), ...data.settings });
+      }
+      if (data.cryptoKey) {
+        localStorage.setItem('pm_crypto_key_v1', data.cryptoKey);
       }
       PMStorage.saveAutoBackupSnapshot(data);
       showToast('Backup imported', 'success');

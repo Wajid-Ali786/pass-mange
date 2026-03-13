@@ -2,71 +2,111 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Password Manager Pro</title>
-      <!-- Fontawesome Files  -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Password Manager Pro</title>
   <link rel="stylesheet" type="text/css" href="fontawesome/css/fontawesome.min.css">
   <link rel="stylesheet" type="text/css" href="fontawesome/css/solid.min.css">
   <link rel="stylesheet" type="text/css" href="fontawesome/css/regular.min.css">
   <link rel="stylesheet" type="text/css" href="fontawesome/css/brands.min.css">
-  
-    <link rel="stylesheet" href="style.css">
-
-
+  <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <header class="topbar">
-        <h1>Password Manager Pro</h1>
-        <div class="top-actions">
-            <input id="searchInput" placeholder="Search name, url, user, password, date...">
-            <button onclick="openAddForm()">Add</button>
-            <button onclick="exportBackup()">Export</button>
-            <label class="importBtn">Import
-                <input type="file" id="importFile" accept="application/json">
-            </label>
-            <a href="history.html">History</a>
-            <a href="settings.html">Settings</a>
-        </div>
-    </header>
-    <main>
-        <div id="sitesContainer"></div>
-    </main>
-    <div id="siteModal" class="modal">
-        <div class="modal-box">
-            <h2 id="modalTitle">Add Password</h2>
-            <input id="siteName" placeholder="Site Name">
-            <input id="siteURL" placeholder="Site URL">
-            <input id="siteUser" placeholder="Username / Email">
-            <input id="sitePass" placeholder="Password">
-            <label>Password Updated Date & Time</label>
-            <input type="datetime-local" id="passDate">
-            <label class="favCheck"><input type="checkbox" id="favoriteCheck"> Favorite</label>
-            <div class="modal-actions">
-                <button onclick="saveSite()">Save</button>
-                <button onclick="closeModal()">Cancel</button>
-            </div>
-        </div>
+  <header class="topbar">
+    <h1>Password Manager Pro</h1>
+    <div class="top-actions">
+      <input id="searchInput" placeholder="Search name, url, user, date...">
+      <select id="sortSelect" title="Sort cards">
+        <option value="manual">Manual Order</option>
+        <option value="name">Name (A–Z)</option>
+        <option value="updated">Last Updated</option>
+        <option value="used">Most Recently Used</option>
+      </select>
+      <select id="categoryFilter" title="Filter by category"></select>
+      <label class="inlineCheck"><input type="checkbox" id="favoritesOnly"> Favorites</label>
+      <button id="themeToggle" type="button">🌙</button>
+      <button onclick="openAddForm()">Add</button>
+      <button onclick="exportBackup()">Export</button>
+      <label class="importBtn">Import
+        <input type="file" id="importFile" accept="application/json">
+      </label>
+      <a href="history.html">History</a>
+      <a href="settings.html">Settings</a>
     </div>
+  </header>
 
-    <!-- deleteModal -->
-    <div id="deleteModal" class="modal">
-        <div class="modal-content">
-            <p id="modalText"></p>
-            <button id="confirmBtn">Yes, delete</button>
-            <button id="cancelBtn">Cancel</button>
-        </div>
+  <main>
+    <section id="categorySummary" class="category-summary"></section>
+    <div id="sitesContainer"></div>
+    <div class="pagination-row">
+      <label>Cards per page
+        <select id="pageSizeSelect">
+          <option>10</option>
+          <option>25</option>
+          <option>50</option>
+          <option>100</option>
+        </select>
+      </label>
+      <div class="pagination-actions">
+        <button id="prevPageBtn" type="button">Prev</button>
+        <span id="pageLabel">Page 1</span>
+        <button id="nextPageBtn" type="button">Next</button>
+      </div>
     </div>
+  </main>
 
-    <div id="toast"></div>
-    <script src="storage.js"></script>
-    <script src="toast.js"></script>
-    <script src="search.js"></script>
-    <script src="backup.js"></script>
-    <script src="theme.js"></script>
-    <script src="ui.js"></script>
-    <script src="app.js"></script>
+  <div id="siteModal" class="modal">
+    <div class="modal-box">
+      <h2 id="modalTitle">Add Password</h2>
+      <input id="siteName" placeholder="Site Name">
+      <input id="siteURL" placeholder="Site URL">
+      <input id="siteUser" placeholder="Username / Email">
+      <input id="sitePass" placeholder="Password">
+      <label>Password Updated Date & Time</label>
+      <input type="datetime-local" id="passDate">
+      <label>Category</label>
+      <input id="siteCategory" list="categoryList" placeholder="Work / Social / Banking ...">
+      <datalist id="categoryList"></datalist>
+      <label>Category color</label>
+      <input id="siteCategoryColor" type="color" value="#3964ff">
+      <label class="favCheck"><input type="checkbox" id="favoriteCheck"> Favorite</label>
+      <div class="modal-actions">
+        <button onclick="saveSite()">Save</button>
+        <button onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="passwordHistoryModal" class="modal">
+    <div class="modal-box history-popup-box">
+      <div class="history-popup-header">
+        <h2>Password History</h2>
+        <button id="closePasswordHistory" type="button"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="passwordHistoryBody"></div>
+    </div>
+  </div>
+
+  <div id="deleteModal" class="modal">
+    <div class="modal-content">
+      <p id="modalText"></p>
+      <button id="confirmBtn">Yes, delete</button>
+      <button id="cancelBtn">Cancel</button>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script src="storage.js"></script>
+  <script src="encryption.js"></script>
+  <script src="toast.js"></script>
+  <script src="filters.js"></script>
+  <script src="history.js"></script>
+  <script src="backup.js"></script>
+  <script src="theme.js"></script>
+  <script src="ui.js"></script>
+  <script src="app.js"></script>
 </body>
 
 </html>
