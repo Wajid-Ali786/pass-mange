@@ -15,7 +15,7 @@
   --danger: #d73a49;
   --shadow: 0 10px 25px rgba(17, 22, 38, .08);
 }
-
+html {scrollbar-width: thin;}
 body.dark {
   --bg: #0f141d;
   --card: #1a2230;
@@ -41,8 +41,8 @@ input, button, a, select, .importBtn { border-radius: 10px; border: 1px solid va
 button, .top-actions a, .importBtn { background: var(--primary); color: #fff; text-decoration: none; cursor: pointer; border-color: transparent; }
 button:hover, .top-actions a:hover, .importBtn:hover { filter: brightness(.95); }
 .importBtn input { display: none; }
-.inlineCheck { display: flex; align-items: center; gap: 6px; color: #fff; }
-
+.inlineCheck { display: flex; align-items: center; gap: 6px; color: var(--text); margin-right: 20px; }
+.inlineCheck input { min-width: unset; }
 main { padding: 22px; max-width: 1200px; margin: 0 auto; }
 
 #sitesContainer, #history { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 16px; }
@@ -62,23 +62,34 @@ main { padding: 22px; max-width: 1200px; margin: 0 auto; }
 .card-head-actions { display: flex; align-items: center; gap: 6px; }
 .ghost-btn { background: transparent; border-color: var(--border); color: var(--text); }
 
-.mark-star-unstar { padding: 0; background: transparent; color: goldenrod; border: none; font-size: 20px; }
+.mark-card-pin {background: transparent; border-color: var(--border); color: var(--text); transition: 0.5s ease;}
+.mark-card-pin.unpinned {transform: translateY(-50px); opacity: 0.5; }
+.mark-card-pin.pinned{transform: translateY(0px); opacity: 1; }
+.siteCard:hover .mark-card-pin.unpinned {transform: translateY(0px); }
 
+.mark-star-unstar { padding: 0; background: transparent; color: goldenrod; border: none; font-size: 20px; transition: 0.3s ease; }
+.mark-star-unstar.unstar { transform: translateY(-45px);  opacity: 0.7; }
+.mark-star-unstar.star { transform: translateY(0px);  opacity: 1; }
+.siteCard:hover .mark-star-unstar.unstar { transform: translateY(0px); }
 .category-badge {
   width: fit-content; background: color-mix(in srgb, var(--badge-color) 20%, transparent); color: var(--text);
   border: 1px solid color-mix(in srgb, var(--badge-color) 70%, #ffffff); border-radius: 999px; padding: 4px 10px; font-size: 12px;
 }
 
-.collapse-content { max-height: 500px; overflow: hidden; transition: max-height .25s ease, opacity .25s ease; opacity: 1; }
+.collapse-content { max-height: 500px; overflow: hidden; transition: max-height .25s ease, opacity .25s ease; opacity: 1;opacity: 1; display: flex; gap: 8px; flex-direction: column; }
 .siteCard.collapsed .collapse-content { max-height: 0; opacity: 0; }
 
 .user-name, .pass-row { width: 100%; display: flex; align-items: center; gap: 10px; }
+.user-name strong,
+.pass-text {
+  width: 35%;
+} 
 .user-input, .password-input {
   width: 100%; padding: 8px 32px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px;
   background: var(--bg); color: var(--text); outline: none;
 }
-.user-input { padding: 8px 12px; }
-.password-box { position: relative; display: flex; align-items: center; width: 62%; }
+.user-input { padding: 8px 12px; width: 60%;}
+.password-box { position: relative; display: flex; align-items: center; width: 60%; }
 .copy-btn, .toggle-btn { position: absolute; border: none; background: none; color: var(--primary); padding: 0; }
 .copy-btn { left: 10px; } .toggle-btn { right: 10px; }
 
@@ -90,7 +101,8 @@ main { padding: 22px; max-width: 1200px; margin: 0 auto; }
 
 .pagination-row { margin-top: 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .pagination-actions { display: flex; gap: 8px; align-items: center; }
-
+.pagination-actions.no-pagination { display: none; }
+.pagination-actions button:disabled { opacity: 0.7; }
 .dragging { opacity: .35; }
 .drag-over { outline: 2px dashed var(--primary); }
 
